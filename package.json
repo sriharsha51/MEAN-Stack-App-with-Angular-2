@@ -24,7 +24,11 @@
   },
   "homepage": "https://github.com/sriharsha51/MEAN-Stack-App-with-Angular-2#readme",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.1",
+    "cors": "^2.8.4",
     "express": "^4.15.4",
+    "jsonwebtoken": "^8.0.1",
     "mongoose": "^4.11.12"
   },
   "devDependencies": {
