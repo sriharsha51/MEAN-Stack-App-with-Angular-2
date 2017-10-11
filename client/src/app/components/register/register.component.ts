@@ -46,6 +46,7 @@ export class RegisterComponent implements OnInit {
                       this.validatePassword]],
       confirm: ['', [Validators.required]]
    }, { validator: this.matchingPasswords('password', 'confirm') })
+ 
   }
 
   disableForm() {
@@ -142,7 +143,7 @@ export class RegisterComponent implements OnInit {
       }
     })
   }
-  
+
   checkUsername() {
     this.authService.checkUsername(this.form.get('username').value).subscribe(data => {
       if(!data.success) {
@@ -154,4 +155,5 @@ export class RegisterComponent implements OnInit {
       }
     });
   }
+    
 }

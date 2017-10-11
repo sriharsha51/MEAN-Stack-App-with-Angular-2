@@ -14,11 +14,14 @@ export class BlogComponent implements OnInit {
   messageClass;
   message;
   newPost: boolean = false;
-  loadingBlogs: boolean = false;
+  loadingBlogs: boolean = false;  
   form;
+  commentForm;
   processing: boolean = false;
   username: string;
   blogPosts;
+  newComment = [];
+  enabledComments = [];
 
   constructor( private formBuilder: FormBuilder,
                private authService: AuthService,
@@ -38,6 +41,17 @@ export class BlogComponent implements OnInit {
 
     this.getAllBlogs();//to load blogs as soon as the page loads.
 
+   this.commentForm = this.formBuilder.group({
+     comment: ['',[Validators.required, Validators.minLength(1), Validators.maxLength(200)]]
+   });
+  }
+
+  enableCommentForm() {
+    this.commentForm.get('comment').enable();
+  }
+
+  disableCommentForm() {
+    this.commentForm.get('comment').disable();
   }
 
   enableFormNewBlogForm() {
@@ -71,9 +85,19 @@ export class BlogComponent implements OnInit {
       this.loadingBlogs = false;
     }, 2000)//just to restrict user to click reload many times in succession so that requests will not go to backend
   }
+  // function to post a new comment
+  draftComment(id) {
+    this.commentForm.reset(); 
+    this.newComment = [];
+    this.newComment.push(id);
+  }
 
-  draftComment() {
-    
+  cancelSubmission(id) {
+    const index = this.newComment.indexOf(id);
+    this.newComment.splice(index, 1);
+    this.commentForm.reset();
+    this.enableCommentForm();
+    this.processing = false;
   }
 
   onBlogSubmit() {
@@ -104,7 +128,7 @@ export class BlogComponent implements OnInit {
           this.enableFormNewBlogForm();
         }, 1000)
       }
-    })
+    });
 
   }
 
@@ -115,8 +139,43 @@ export class BlogComponent implements OnInit {
   getAllBlogs(){
     this.blogService.getAllBlogs().subscribe(data => {
       this.blogPosts = data.blogs;
-    })
+    });
   }
+  
+   likeBlog(id) {
+     this.blogService.likeBlog(id).subscribe(data => {
+       this.getAllBlogs();
+     });
+   }
 
+   dislikeBlog(id) {
+     this.blogService.dislikeBlog(id).subscribe(data => {
+       this.getAllBlogs();
+     });
+   }
+
+   postComment(id) {
+     this.disableCommentForm();
+     this.processing = true;
+     const comment = this.commentForm.get('comment').value;  
+     this.blogService.postComment(id, comment).subscribe(data => {
+       this.getAllBlogs();
+       const index = this.newComment.indexOf(id);
+       this.newComment.splice(index, 1);
+       this.enableCommentForm();
+       this.commentForm.reset();
+       this.processing = false;
+       if(this.enabledComments.indexOf(id) < 0) this.expand(id);
+     });
+   }
+
+   expand(id) {
+     this.enabledComments.push(id);
+   }
+
+   collapse(id) { 
+     const index = this.enabledComments.indexOf(id);
+     this.enabledComments.splice(index, 1);
+   }
 
 }
