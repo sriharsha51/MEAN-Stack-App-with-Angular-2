@@ -32,7 +32,7 @@ app.use('/authentication', authentication);
 app.use('/blogs', blogs);
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + 'public/index.html'));
+  res.sendFile(path.join(__dirname + '/public/index.html'));
 });//connect server to index page of angular
 
 app.listen(port, () => {
