@@ -23,7 +23,7 @@ mongoose.connect(config.uri, (err) => {
 // you have diff dbs and config settings for each env
 //middleware
 app.use(cors({
-    origin: 'http://localhost:4200';
+    origin: 'http://localhost:4200'
 }));
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json());
